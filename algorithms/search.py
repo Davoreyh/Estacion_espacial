@@ -29,7 +29,38 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    
+    #crear pila para manejar los nodos a visitar, cnjunto para nodos visitados
+    stack = utils.Stack()
+    visited = set()
+    
+    #obtener estado inicial del problema 
+    pos = problem.getStartState()
+    stack.push((pos,[]))
+    
+    while stack: 
+       state, path= stack.pop()
+       
+       #verificar si estado ya fue visitado
+       if state not in visited: 
+           visited.add(state)
+           
+           #verificar si estado actual es la meta
+           if problem.isGoalState(state):
+               return path
+           
+           #pedir estados sucesores
+           succesors = problem.getSuccessors(state)
+           for succesor in succesors:
+                next_state, action , _ = succesor
+                
+                #verificar si estados ya han sido visitados
+                if next_state not in visited:
+                    new_path = path + [action]
+                    stack.push((next_state, new_path))
+    #si no se encontro ningun camino, retornar una lista sin acciones 
+    return []
+
 
 
 def breadthFirstSearch(problem: SearchProblem):
