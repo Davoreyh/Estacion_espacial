@@ -28,7 +28,7 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    # TODO: Add your code here
+    # TODO: Add your code here DONE
     
     #crear pila para manejar los nodos a visitar, cnjunto para nodos visitados
     stack = utils.Stack()
@@ -38,7 +38,7 @@ def depthFirstSearch(problem: SearchProblem):
     pos = problem.getStartState()
     stack.push((pos,[]))
     
-    while stack: 
+    while not stack.isEmpty(): 
        state, path= stack.pop()
        
        #verificar si estado ya fue visitado
@@ -68,7 +68,38 @@ def breadthFirstSearch(problem: SearchProblem):
     Search the shallowest nodes in the search tree first.
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+    
+    #Iniciar cola  y conjkunto para nodos viistados
+    queue = utils.Queue()
+    visited = set()
+    
+    #estado inicial robot
+    pos = problem.getStartState()
+    queue.push((pos,[] ))
+    visited.add(pos)
+    
+    while not queue.isEmpty():
+        state, path = queue.pop()
+        
+        #verificar si estado es la meta
+        if problem.isGoalState(state):
+            return path
+            
+        #si no, pedir estados sucesores
+        successors = problem.getSuccessors(state)
+            
+        #procesar estaos siguientes
+        for successor in successors:
+            next_state, action, _ = successor
+                
+            #verificar si estados ya fuyeron visitados
+            if next_state not in visited:
+                visited.add(next_state)
+                new_path = path + [action]
+                queue.push((next_state, new_path))
+                    
+    #camino vacio si no encontro nada 
+    return []
 
 
 def uniformCostSearch(problem: SearchProblem):
