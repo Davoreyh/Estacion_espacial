@@ -87,46 +87,31 @@ def systemRepairHeuristic(
     # TODO: Add your code here
 
     posicion, tieneKit, sitiosParaResolver = state
-
-    print(posicion)
-    print(sitiosParaResolver)
-    print(problem.kitPosition)
     
-    if problem.heuristicInfo != {}:
-        backState = [problem.kitPosition , True, sitiosParaResolver]
+    if problem.heuristicInfo == {}:
+        backState = [problem.kitPosition , True, list(sitiosParaResolver)]
         next = problem.kitPosition
 
         while next != problem.controlPosition:
             newNext = calcularSiguiente(backState, problem)
-            backState[2].remove(newNext)
+            if newNext in backState[2]:
+                backState[2].remove(newNext)
             problem.heuristicInfo[next] = newNext
             next = newNext
-            print("next",next)
+    print(problem.heuristicInfo)
+
     totalDis = 0
 
     while posicion != problem.controlPosition:
         if posicion not in problem.heuristicInfo:
             newPosicion = calcularSiguiente(state,problem)
-            print("entro")
         else:
-            print("no entro")
             newPosicion = problem.heuristicInfo[posicion]
 
         totalDis += calcDistanciaManjatan(posicion, newPosicion)
         posicion = newPosicion
-        print("pos",posicion , "," , newPosicion)
-
     return totalDis
         
-    
-
-    
-
-   
-    return problem.heuristicInfo[posicion]
-    
-    for sitioParaResolver in sitiosParaResolver:
-        problem.heuristicInfo[posicion][sitioParaResolver] = calcDistanciaEuclid(sitioParaResolver,posicion)
 
 
 def calcularSiguiente(state, problem:SystemRepairProblem):
@@ -138,7 +123,7 @@ def calcularSiguiente(state, problem:SystemRepairProblem):
         nextSitio = None
         distanciaMin = 999999999999
         for sitioParaResolver in sitiosParaResolver:
-            distancia = calcDistanciaEuclid(sitioParaResolver,posicion)
+            distancia = calcDistanciaManjatan(sitioParaResolver,posicion)
             if distancia > 0 and (nextSitio == None or distancia < distanciaMin):
                 nextSitio = sitioParaResolver
                 distanciaMin = distancia
