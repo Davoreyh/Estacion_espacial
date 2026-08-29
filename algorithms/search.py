@@ -140,25 +140,26 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     estadoInicial = problem.getStartState()
     colitaPrioridad.push(estadoInicial, 0)
     visitados = set()
-    info_estados = {problem.getStartState(): ([], 0)}
+    info_estados = {problem.getStartState(): ([], 0, 0)}
 
     while not colitaPrioridad.isEmpty():
         estado = colitaPrioridad.pop()
         if estado not in visitados:
             visitados.add(estado)
-            acciones, costoActual = info_estados[estado]
+            acciones, costoActual, costoHeuristic = info_estados[estado]
             if problem.isGoalState(estado):
                 return acciones
 
             for siguienteEstado, accion, costoPaso in problem.getSuccessors(estado):
                 nuevoCosto = costoActual + costoPaso
-                posibles_datos = info_estados.get(siguienteEstado, (None, None))
-                if posibles_datos == (None, None):
-                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
-                    colitaPrioridad.push(siguienteEstado, nuevoCosto + heuristic(siguienteEstado, problem))
-                elif posibles_datos[1] > nuevoCosto:
-                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
-                    colitaPrioridad.update(siguienteEstado, nuevoCosto + heuristic(siguienteEstado, problem))
+                nuevoCostoHeuristic = nuevoCosto + heuristic(siguienteEstado, problem)
+                posibles_datos = info_estados.get(siguienteEstado, (None, None, None))
+                if posibles_datos == (None, None, None):
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto, nuevoCostoHeuristic)
+                    colitaPrioridad.push(siguienteEstado, nuevoCostoHeuristic)
+                elif posibles_datos[2] > nuevoCostoHeuristic:
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto, nuevoCostoHeuristic)
+                    colitaPrioridad.update(siguienteEstado, nuevoCostoHeuristic)
 
     return []
 
