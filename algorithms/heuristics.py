@@ -22,8 +22,21 @@ def manhattanHeuristic(state, problem):
     - C if all systems have been repaired.
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
-
+    posicion, tieneKit, sitiosParaResolver = state
+    
+    if not tieneKit:
+        return calcDistanciaManjatan(posicion,problem.kitPosition)
+    if not len(sitiosParaResolver) == 0:
+        distanciaMin = 9999999
+        for sitioParaResolver in sitiosParaResolver:
+            distancia = calcDistanciaManjatan(sitioParaResolver,posicion)
+            if distancia < distanciaMin:
+                distanciaMin = distancia
+        return distanciaMin
+    return calcDistanciaManjatan(posicion,problem.controlPosition)
+    
+def calcDistanciaManjatan(punto1,punto2):
+    return abs(punto1[0]-punto2[0]) + abs(punto1[1]-punto2[1])
 
 def euclideanHeuristic(state, problem):
     """
@@ -36,7 +49,22 @@ def euclideanHeuristic(state, problem):
     - C if all systems have been repaired.
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+
+    posicion, tieneKit, sitiosParaResolver = state
+    
+    if not tieneKit:
+        return calcDistanciaEuclid(posicion,problem.kitPosition)
+    if not len(sitiosParaResolver) == 0:
+        distanciaMin = 9999999
+        for sitioParaResolver in sitiosParaResolver:
+            distancia = calcDistanciaEuclid(sitioParaResolver,posicion)
+            if distancia < distanciaMin:
+                distanciaMin = distancia
+        return distanciaMin
+    return calcDistanciaEuclid(posicion,problem.controlPosition)
+
+def calcDistanciaEuclid(punto1,punto2):
+    return ((punto1[0]-punto2[0])**2 + (punto1[1]-punto2[1])**2)**(0.5)
 
 
 def systemRepairHeuristic(
@@ -57,4 +85,63 @@ def systemRepairHeuristic(
     - Balance heuristic strength vs. computation time (do experiments!)
     """
     # TODO: Add your code here
-    utils.raiseNotDefined()
+
+    posicion, tieneKit, sitiosParaResolver = state
+
+    print(posicion)
+    print(sitiosParaResolver)
+    print(problem.kitPosition)
+    
+    if problem.heuristicInfo != {}:
+        backState = [problem.kitPosition , True, sitiosParaResolver]
+        next = problem.kitPosition
+
+        while next != problem.controlPosition:
+            newNext = calcularSiguiente(backState, problem)
+            backState[2].remove(newNext)
+            problem.heuristicInfo[next] = newNext
+            next = newNext
+            print("next",next)
+    totalDis = 0
+
+    while posicion != problem.controlPosition:
+        if posicion not in problem.heuristicInfo:
+            newPosicion = calcularSiguiente(state,problem)
+            print("entro")
+        else:
+            print("no entro")
+            newPosicion = problem.heuristicInfo[posicion]
+
+        totalDis += calcDistanciaManjatan(posicion, newPosicion)
+        posicion = newPosicion
+        print("pos",posicion , "," , newPosicion)
+
+    return totalDis
+        
+    
+
+    
+
+   
+    return problem.heuristicInfo[posicion]
+    
+    for sitioParaResolver in sitiosParaResolver:
+        problem.heuristicInfo[posicion][sitioParaResolver] = calcDistanciaEuclid(sitioParaResolver,posicion)
+
+
+def calcularSiguiente(state, problem:SystemRepairProblem):
+    posicion, tieneKit, sitiosParaResolver = state
+    
+    if not tieneKit:
+        return problem.kitPosition
+    if not len(sitiosParaResolver) == 0:
+        nextSitio = None
+        distanciaMin = 999999999999
+        for sitioParaResolver in sitiosParaResolver:
+            distancia = calcDistanciaEuclid(sitioParaResolver,posicion)
+            if distancia > 0 and (nextSitio == None or distancia < distanciaMin):
+                nextSitio = sitioParaResolver
+                distanciaMin = distancia
+        return nextSitio
+    return problem.controlPosition
+
