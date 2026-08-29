@@ -106,22 +106,27 @@ def uniformCostSearch(problem: SearchProblem):
     """
     colitaPrioridad = utils.PriorityQueue()
     estadoInicial = problem.getStartState()
-    colitaPrioridad.push((estadoInicial, [], 0), 0)
+    colitaPrioridad.push(estadoInicial, 0)
     visitados = set()
+    info_estados = {problem.getStartState(): ([], 0)}
 
     while not colitaPrioridad.isEmpty():
-        estado, acciones, costoActual = colitaPrioridad.pop()
-
+        estado = colitaPrioridad.pop()
         if estado not in visitados:
             visitados.add(estado)
-
+            acciones, costoActual = info_estados[estado]
             if problem.isGoalState(estado):
                 return acciones
 
             for siguienteEstado, accion, costoPaso in problem.getSuccessors(estado):
                 nuevoCosto = costoActual + costoPaso
-                colitaPrioridad.push((siguienteEstado, acciones + [accion], nuevoCosto), nuevoCosto)
-
+                posibles_datos = info_estados.get(siguienteEstado, (None, None))
+                if posibles_datos == (None, None):
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
+                    colitaPrioridad.push(siguienteEstado, nuevoCosto)
+                elif posibles_datos[1] > nuevoCosto:
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
+                    colitaPrioridad.update(siguienteEstado, nuevoCosto)
     return []
 
 
@@ -133,21 +138,27 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
     colitaPrioridad = utils.PriorityQueue()
     estadoInicial = problem.getStartState()
-    colitaPrioridad.push((estadoInicial, [], 0), 0)
+    colitaPrioridad.push(estadoInicial, 0)
     visitados = set()
+    info_estados = {problem.getStartState(): ([], 0)}
 
     while not colitaPrioridad.isEmpty():
-        estado, acciones, costoActual = colitaPrioridad.pop()
-
+        estado = colitaPrioridad.pop()
         if estado not in visitados:
             visitados.add(estado)
-
+            acciones, costoActual = info_estados[estado]
             if problem.isGoalState(estado):
                 return acciones
 
             for siguienteEstado, accion, costoPaso in problem.getSuccessors(estado):
                 nuevoCosto = costoActual + costoPaso
-                colitaPrioridad.push((siguienteEstado, acciones + [accion], nuevoCosto), nuevoCosto + heuristic(siguiente estado, problem))
+                posibles_datos = info_estados.get(siguienteEstado, (None, None))
+                if posibles_datos == (None, None):
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
+                    colitaPrioridad.push(siguienteEstado, nuevoCosto + heuristic(siguienteEstado, problem))
+                elif posibles_datos[1] > nuevoCosto:
+                    info_estados[siguienteEstado] = (acciones+[accion], nuevoCosto)
+                    colitaPrioridad.update(siguienteEstado, nuevoCosto + heuristic(siguienteEstado, problem))
 
     return []
 

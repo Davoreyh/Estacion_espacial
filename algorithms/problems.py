@@ -284,7 +284,7 @@ class ModuleRepairProblem(SearchProblem):
 
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty), hasModule
-                cost = self._getStepCost(nextState, hasModule)
+                cost = self._getStepCost((nextx, nexty), hasModule)
                 successors.append((nextState, action, cost))
         return successors
 
