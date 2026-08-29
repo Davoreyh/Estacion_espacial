@@ -29,24 +29,6 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     # TODO: Add your code here
-    untried = utils.Queue()
-    untried.push([problem.getStartState(), (None,None)])
-    checked = {}
-    finished = False
-    while not untried.isEmpty() and not finished:
-        state_checking, info_previous = untried.pop()
-        if state_checking not in checked:
-            checked[state_checking] = info_previous
-            finished = problem.isGoalState(state_checking)
-            if not finished:
-                successors = problem.getSuccessors(state_checking)
-                for succesor in successors:
-                    next_state, next_action, next_cost = succesor
-                    previous = (state_checking, next_action)
-                    untried.push([next_state, previous])
-            
-        
-    
     utils.raiseNotDefined()
 
 
