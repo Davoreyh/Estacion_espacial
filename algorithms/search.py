@@ -28,7 +28,6 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    # TODO: Add your code here DONE
     
     #crear pila para manejar los nodos a visitar, cnjunto para nodos visitados
     stack = utils.Stack()
@@ -67,8 +66,7 @@ def breadthFirstSearch(problem: SearchProblem):
     """
     Search the shallowest nodes in the search tree first.
     """
-    # TODO: Add your code here
-    
+
     #Iniciar cola  y conjkunto para nodos viistados
     queue = utils.Queue()
     visited = set()
